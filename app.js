@@ -1,20 +1,25 @@
-const http = require('http');
-const fs = require('fs');
-const server = http.createServer((req, res) => {
+const _ = require('lodash');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
 
-    if (req.url == '/') {
-        res.write('HOME');
-        res.end()
-    } else if (req.url == '/api') {
-        const readstream = fs.createReadStream('example.json');
-        res.writeHead(200, { 'Content-type': 'application/json' });
-        readstream.pipe(res);
-        //res.end()
-    } else if (req.url == '/1.jpg') {
-        const readstream = fs.createReadStream('1.jpg');
-        res.writeHead(200, { 'Content-type': 'image/png' });
-        readstream.pipe(res);
-        //res.end()
-    }
+const app = express();
+app.use('/public', express.static(path.join(__dirname, 'static')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'static/index.html'));
+});
+app.get('/exmaple', (req, res) => {
+    res.send(`example express ${req.query}`);
+})
 
-    }).listen('3000');
+app.get('/exmaple/:name/:age', (req, res) => {
+    res.send(`example express ${req.params.name}`);
+})
+
+app.post('/', (req, res) => {
+    console.log(req.body)
+    res.json({ success: true });
+})
+app.listen(3000);
