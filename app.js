@@ -6,12 +6,31 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use('/public', express.static(path.join(__dirname, 'static')));
-
+app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.get('/', (req, res) => {
+    // static file =>
     res.sendFile(path.join(__dirname, 'static/index.html'));
+
+
 });
+
+app.get('/:userQuery', (req, res) => {
+
+    console.log(req.params.userQuery)
+        // render dynamic file with EJS
+    res.render('index', {
+            data: {
+                userQuery: req.params.userQuery,
+                searchResults: ['book1', 'book2', 'book3', 'book4'],
+                loggedIn: true,
+                username: "DIAA"
+            }
+        }) // render index.ejs
+});
+
+
 app.get('/exmaple', (req, res) => {
     res.send(`example express ${req.query}`);
 })
