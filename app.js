@@ -3,9 +3,15 @@ const express = require('express');
 const path = require('path');
 const Joi = require('joi');
 const bodyParser = require('body-parser');
+const { method } = require('lodash');
 
 const app = express();
 app.use('/public', express.static(path.join(__dirname, 'static')));
+app.use((req, res, next) => { // custom middleware
+    //console.log(req.url, req, method)
+    req.username = 'DIAA22' // pass value via middleware
+    next();
+})
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -25,7 +31,7 @@ app.get('/:userQuery', (req, res) => {
                 userQuery: req.params.userQuery,
                 searchResults: ['book1', 'book2', 'book3', 'book4'],
                 loggedIn: true,
-                username: "DIAA"
+                username: req.username
             }
         }) // render index.ejs
 });
